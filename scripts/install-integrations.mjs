@@ -16,12 +16,7 @@ export function mergeHooks(settings, command) {
     if (next.hooks[event] != null && !Array.isArray(next.hooks[event]))
       throw new Error("Invalid hook event: " + event);
     const groups = (next.hooks[event] ||= []);
-    if (
-      groups.some((group) =>
-        group.hooks?.some((hook) => hook.command === command),
-      )
-    )
-      continue;
+    if (groups.some((group) => group.hooks?.some((hook) => hook.command === command))) continue;
     groups.push({ hooks: [{ type: "command", command, timeout: 2 }] });
   }
   return next;
@@ -44,10 +39,7 @@ export async function install({
   if (!existing) await symlink(join(root, "integrations/pi"), extension, "dir");
   else {
     const { realpath } = await import("node:fs/promises");
-    if (
-      (await realpath(extension)) !==
-      (await realpath(join(root, "integrations/pi")))
-    )
+    if ((await realpath(extension)) !== (await realpath(join(root, "integrations/pi"))))
       throw new Error("Pi extension path already exists; not overwritten");
   }
   const settingsFile = join(
@@ -80,14 +72,9 @@ export async function install({
   }
   console.log("Pi extension: " + extension);
   console.log("Claude hooks: " + settingsFile);
-  console.log(
-    "Run /reload in existing Pi sessions. Restart existing Claude sessions.",
-  );
+  console.log("Run /reload in existing Pi sessions. Restart existing Claude sessions.");
 }
-if (
-  process.argv[1] &&
-  import.meta.url === pathToFileURL(process.argv[1]).href
-) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   install().catch((error) => {
     console.error(error.message);
     process.exitCode = 1;

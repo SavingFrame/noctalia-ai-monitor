@@ -13,13 +13,22 @@ local generation = 0
 local function publishQuotas(quotas, failure)
   local previous = noctalia.state.get("quotas") or {}
   local cached = {}
-  for _, account in ipairs(previous.accounts or {}) do cached[account.provider] = account end
+  for _, account in ipairs(previous.accounts or {}) do
+    cached[account.provider] = account
+  end
   local accounts = {}
   for _, account in ipairs(quotas and quotas.accounts or previous.accounts or {}) do
     local old = cached[account.provider]
-    if (failure or account.status ~= "ok") and old and old.status == "ok" and #(old.windows or {}) > 0 then
+    if
+      (failure or account.status ~= "ok")
+      and old
+      and old.status == "ok"
+      and #(old.windows or {}) > 0
+    then
       local retained = {}
-      for key, value in pairs(old) do retained[key] = value end
+      for key, value in pairs(old) do
+        retained[key] = value
+      end
       retained.checkedAt = old.checkedAt or previous.updatedAt
       retained.staleReason = failure or account.reason or "Usage refresh failed"
       table.insert(accounts, retained)
@@ -35,25 +44,39 @@ local function publishQuotas(quotas, failure)
 end
 
 local function refreshQuotas()
-  if demo then return end
+  if demo then
+    return
+  end
   if not noctalia.getConfig("fetch_quotas") then
     noctalia.state.set("quotas", { accounts = {}, note = "Quota polling disabled" })
     return
   end
-  if quotaPending or noctalia.nowMs() < nextQuotaAt then return end
+  if quotaPending or noctalia.nowMs() < nextQuotaAt then
+    return
+  end
   quotaPending = true
   nextQuotaAt = noctalia.nowMs() + 300000
   local requestGeneration = generation
-  local accepted = noctalia.runAsync({ "node", noctalia.pluginDir() .. "/scripts/quotas.mjs" }, function(result)
-    quotaPending = false
-    if requestGeneration ~= generation then return end
-    local quotas = noctalia.json.decode(result.stdout)
-    if result.exitCode ~= 0 or result.stdoutTruncated or type(quotas) ~= "table" or type(quotas.accounts) ~= "table" then
-      publishQuotas(nil, "Quota helper failed. Check Node.js.")
-      return
+  local accepted = noctalia.runAsync(
+    { "node", noctalia.pluginDir() .. "/scripts/quotas.mjs" },
+    function(result)
+      quotaPending = false
+      if requestGeneration ~= generation then
+        return
+      end
+      local quotas = noctalia.json.decode(result.stdout)
+      if
+        result.exitCode ~= 0
+        or result.stdoutTruncated
+        or type(quotas) ~= "table"
+        or type(quotas.accounts) ~= "table"
+      then
+        publishQuotas(nil, "Quota helper failed. Check Node.js.")
+        return
+      end
+      publishQuotas(quotas)
     end
-    publishQuotas(quotas)
-  end)
+  )
   if not accepted then
     quotaPending = false
     publishQuotas(nil, "Could not start quota helper")
@@ -66,20 +89,32 @@ local function refresh()
     return
   end
   refreshQuotas()
-  if pending then return end
+  if pending then
+    return
+  end
   pending = true
   local requestGeneration = generation
-  local accepted = noctalia.runAsync({ "node", noctalia.pluginDir() .. "/scripts/sessions.mjs" }, function(result)
-    pending = false
-    if requestGeneration ~= generation then return end
-    local snapshot, err = noctalia.json.decode(result.stdout)
-    if result.exitCode ~= 0 or result.stdoutTruncated or type(snapshot) ~= "table" or type(snapshot.sessions) ~= "table" then
-      snapshot = model.empty()
-      snapshot.error = "Session scan failed. Check Node.js and plugin logs."
-      noctalia.log(result.stderr .. " " .. tostring(err or ""))
+  local accepted = noctalia.runAsync(
+    { "node", noctalia.pluginDir() .. "/scripts/sessions.mjs" },
+    function(result)
+      pending = false
+      if requestGeneration ~= generation then
+        return
+      end
+      local snapshot, err = noctalia.json.decode(result.stdout)
+      if
+        result.exitCode ~= 0
+        or result.stdoutTruncated
+        or type(snapshot) ~= "table"
+        or type(snapshot.sessions) ~= "table"
+      then
+        snapshot = model.empty()
+        snapshot.error = "Session scan failed. Check Node.js and plugin logs."
+        noctalia.log(result.stderr .. " " .. tostring(err or ""))
+      end
+      noctalia.state.set("snapshot", snapshot)
     end
-    noctalia.state.set("snapshot", snapshot)
-  end)
+  )
   if not accepted then
     pending = false
     local snapshot = model.empty()
@@ -88,7 +123,9 @@ local function refresh()
   end
 end
 
-function update() refresh() end
+function update()
+  refresh()
+end
 
 function onConfigChanged()
   generation = generation + 1

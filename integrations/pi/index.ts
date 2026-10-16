@@ -1,10 +1,7 @@
 import { realpathSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import type {
-  ExtensionAPI,
-  ExtensionContext,
-} from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 // Only allowlisted metadata crosses the bridge. Never prompts, arguments, or results.
 export default async function (pi: ExtensionAPI) {
@@ -108,8 +105,7 @@ export default async function (pi: ExtensionAPI) {
     await publish(ctx);
   });
   pi.on("message_end", async (event, ctx) => {
-    if (event.message.role === "assistant")
-      failed = event.message.stopReason === "error";
+    if (event.message.role === "assistant") failed = event.message.stopReason === "error";
     await publish(ctx);
   });
   pi.on("agent_settled", async (event, ctx) => {

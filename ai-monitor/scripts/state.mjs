@@ -4,11 +4,18 @@ import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 
 export function stateDir() {
-  return join(process.env.XDG_STATE_HOME || join(homedir(), ".local/state"), "noctalia-ai-monitor", "sessions");
+  return join(
+    process.env.XDG_STATE_HOME || join(homedir(), ".local/state"),
+    "noctalia-ai-monitor",
+    "sessions",
+  );
 }
 export async function processIdentity(pid, root = "/proc") {
   const raw = await readFile(join(root, String(pid), "stat"), "utf8");
-  const fields = raw.slice(raw.lastIndexOf(")") + 2).trim().split(/\s+/);
+  const fields = raw
+    .slice(raw.lastIndexOf(")") + 2)
+    .trim()
+    .split(/\s+/);
   return { ppid: Number(fields[1]), startTime: fields[19] };
 }
 export function recordPath(provider, pid, dir = stateDir()) {
@@ -20,7 +27,9 @@ export async function readRecord(provider, pid, dir = stateDir()) {
     const raw = await readFile(file, "utf8");
     if (raw.length > 65536) return null;
     return JSON.parse(raw);
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 export async function writeRecord(record, dir = stateDir()) {
   await mkdir(dir, { recursive: true, mode: 0o700 });
