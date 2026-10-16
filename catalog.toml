@@ -1,0 +1,11 @@
+[[plugin]]
+id = "archie/ai-monitor"
+name = "AI Monitor"
+version = "0.2.0"
+author = "archie"
+license = "MIT"
+plugin_api = 24
+icon = "robot"
+description = "Pi and Claude activity, context usage, and subscription quotas."
+tags = ["ai", "development"]
+dependencies = ["node"]

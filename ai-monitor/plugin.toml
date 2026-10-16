@@ -1,0 +1,48 @@
+id = "archie/ai-monitor"
+name = "AI Monitor"
+version = "0.2.0"
+plugin_api = 24
+author = "archie"
+license = "MIT"
+icon = "robot"
+description = "Pi and Claude session activity, context usage, and subscription quotas."
+tags = ["ai", "development"]
+dependencies = ["node"]
+
+[[setting]]
+key = "refresh_seconds"
+type = "int"
+label_key = "settings.refresh.label"
+default = 1
+min = 1
+max = 60
+
+[[setting]]
+key = "demo"
+type = "bool"
+label_key = "settings.demo.label"
+description_key = "settings.demo.description"
+default = false
+
+[[setting]]
+key = "fetch_quotas"
+type = "bool"
+label_key = "settings.quotas.label"
+description_key = "settings.quotas.description"
+default = true
+
+[[service]]
+id = "collector"
+entry = "service.luau"
+
+[[widget]]
+id = "sessions"
+entry = "widget.luau"
+
+[[panel]]
+id = "overview"
+entry = "panel.luau"
+width = 540
+height = 620
+placement = "floating"
+position = "top_right"

@@ -1,0 +1,15 @@
+{
+  "name": "noctalia-ai-monitor",
+  "private": true,
+  "description": "Noctalia bar widget and panel for Pi and Claude Code activity and subscription quotas.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "type": "module",
+  "scripts": {
+    "scan": "node ai-monitor/scripts/sessions.mjs",
+    "quotas": "node ai-monitor/scripts/quotas.mjs",
+    "install:integrations": "node scripts/install-integrations.mjs"
+  }
+}

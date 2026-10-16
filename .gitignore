@@ -1,0 +1,25 @@
+# Dependencies and generated output
+node_modules/
+coverage/
+dist/
+*.log
+
+# Local credentials and environment
+.env
+.env.*
+!.env.example
+auth.json
+.credentials.json
+*.pem
+*.key
+
+# Local editor and OS files
+.idea/
+.vscode/
+.DS_Store
+*~
+*.swp
+*.swo
+
+# Installation backups
+*.before-ai-monitor-*

@@ -1,0 +1,7 @@
+{
+  "settings.refresh.label": "Local session polling (seconds)",
+  "settings.demo.label": "Demo data",
+  "settings.demo.description": "Show simulated sessions and limits instead of local processes.",
+  "settings.quotas.label": "Fetch subscription quotas",
+  "settings.quotas.description": "Query Codex and Claude usage every 5 minutes with local login tokens. Tokens are never refreshed or saved by this plugin."
+}
